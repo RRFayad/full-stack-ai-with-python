@@ -62,3 +62,32 @@
         case _:
             print ("z")
   ```
+
+## Section 5 - Loops in Python
+
+- for, while
+
+- iterable functions:
+  - range() - returns a iterable range
+  - enumarate() - enumarates a list
+  - zip() - zip combines 2 lists
+
+- Inside loop:
+  - `continue` (skip one)
+  - `break` (finish loop)
+
+- We can have an `else` for a `for` loop, for example:
+
+  ```python
+      staff = [("Amit", 16), ("Zara", 17), ("Raj", 15)]
+
+      for name, age in staff:
+          if age <= 18:
+              print(f"{name} is eligible to manage the staff")
+              break
+      else:
+          print(f"No one is eligible to manage the staff")
+  ```
+
+- Walrus Operator `:=`: It allows us to assign value to a variable inside an expression
+  - `if (n := len(a)) > 10:` - Now we have the `n` value assigned (and as python does not scope inside a if block, its for the whole file)
