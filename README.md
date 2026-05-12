@@ -91,3 +91,58 @@
 
 - Walrus Operator `:=`: It allows us to assign value to a variable inside an expression
   - `if (n := len(a)) > 10:` - Now we have the `n` value assigned (and as python does not scope inside a if block, its for the whole file)
+
+## Section 6 - Functions in Python
+
+- About Scopes:
+  - We can manipulate scopes with `nonlocal` or `global` (e.g.: declaring a `global` variabel inside a function)
+
+- Arg and Kwargs
+  - In Python, functions arguments are not necessairly positional only, I can explicitly declare the keywords
+    - e.g.: `make_chai(tea="Green", sugar="Medium", milk="No")` - with declared keywords, the order does not matter
+  - **Important:**
+    - Everytime I have `**` in the function args, they are keyargs, which mean I have to explicity delcare the key value
+      - `def do_something(*args, **kwargs)`
+    - ```python
+        def special_chai(*ingredients, **extras):
+          print("Ingredients", ingredients)
+          print("Extras", extras)
+
+        special_chai("Cinnamon", "Cardmom", sweetener="Honey", foam="yes")
+      ```
+
+    - In this example, `ingredients` is a _tuple_, while `extras` is a _dict_
+
+- Multiple returns:
+
+  ```python
+    def chai_report():
+      return 100, 20, 10 # sold, remaining
+
+    sold, remaining, not_paid = chai_report()
+  ```
+
+  - **Obs:** If I do not destructure, its a list
+
+- Types os functions
+  - Pure vs Impure Functions
+    - Pure: does not depend on a outer variable
+    - We should always avoid impures
+
+  - Recursive Functions
+    - Function calls itself
+
+  - Lambda Functions (Anonymous)
+    - ```python
+        strong_chai = list(filter(lambda chai: chai!="kadak", chai_types))
+      ```
+
+- Documenting Functions
+  - If in the 1st line of the function, we add a comment with 3 ", we can access it later with _dunder_ docs
+  - ```python
+      def do_nothing():
+          """This function does nothing"""
+          return
+
+      print (do_nothing.__doc__)  #Prints my description
+    ```
