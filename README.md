@@ -146,3 +146,18 @@
 
       print (do_nothing.__doc__)  #Prints my description
     ```
+
+## Section 7 - Comprehensions
+
+- Comprehensions are basically sugar syntar for loops, using a single line of code (filtering, mapping, etc)
+  - Are not only about DX, but also cleaner as faster code
+  - Works for any iterable, like lists, sets, dictionaries and generators
+
+- How it works:
+  - `result = [expression for item in iterable if condition]`
+
+    ```python
+      fruits = ["apple", "banana", "orange", "avocado"]
+
+      fruits_with_a_in_upper = [fruit.upper() for fruit in fruits if fruit[0].casefold() == "a"]
+    ```
