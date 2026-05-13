@@ -161,3 +161,80 @@
 
       fruits_with_a_in_upper = [fruit.upper() for fruit in fruits if fruit[0].casefold() == "a"]
     ```
+
+## Section 8 - Generators and Decorators
+
+### Generators
+
+- Generators are memory optimized, since it does not store each step, only gives us the final result
+  - This is more memory efficient than having a list
+
+    ```python
+      # generator function
+    def get_chai_gen():
+      yield "Cup 1"
+      yield "Cup 2"
+      yield "Cup 3"
+
+    print(next(chai))
+    print(next(chai))
+    print(next(chai))
+    ```
+
+  - Lets say I have a database of fahrenheit temperature, and I need to check the max in Celsius - given that I will never need the celsius full list anymore, I can use a generator
+
+```python
+  fahrenheit_temperatures = [70, 72, 75, 80, 90]
+
+  celsius_temperatures = (
+      (temp - 32) * 5 / 9
+      for temp in fahrenheit_temperatures
+  )
+
+  max_celsius = max(celsius_temperatures)
+```
+
+- A more complex example, sending values:
+  - Basically:
+    - Next calls the generator;
+    - Each time it runs, it pauses in the `yield` to receive a value (via `send()`)
+
+```python
+  def chai_customer():
+    print("Welcome ! What chai would you like ?")
+    order = yield
+    while True:
+        print(f"Preparing: {order}")
+        order = yield
+
+  stall = chai_customer()
+  next(stall) # start the generator
+
+  stall.send("Masala Chai")
+  stall.send("Lemon Chai")
+```
+
+### Decorators
+
+- Decorators are "on top" of something
+  - It basically wraps a function to perform something else - like we could log that a specific process started, and tiem the duration after
+  - **Obs.:** The `@wraps` serves to keep the original metaData (without iw, the name printed at the end would be `wrapper`, with it, its greet)
+
+```python
+from functools import wraps
+
+def log_activity(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print(f"🚀 Calling: {func.__name__}")
+        result = func(*args, **kwargs)
+        print(f"✅ Finished: {func.__name__}")
+        return result
+    return wrapper
+
+@log_activity
+def brew_chai(type, milk="no"):
+    print(f"Brewing {type} chai and milk status {milk}")
+
+brew_chai("Masala")
+```
