@@ -320,3 +320,44 @@ brew_chai("Masala")
               self.engine.start()
               print("Motorcycle started")
       ```
+
+## Section 10 - Handling Exceptions
+
+- We can write the `try` `except` definng the type of error, e.g.:
+
+  ```python
+    def process_order(item, quantity):
+    try:
+        #Code than can break
+        raise TypeError("Quantity must be a number")    # I can raise an error would be raised automatically
+    except KeyError:
+        #Run if error (Key Error in this case)
+    except:
+        #Run if any error (Despite ot Key Error in this case)
+    else:
+        #Run if NO error
+    finally:
+        #Always run
+  ```
+
+- Customize exceptions
+
+  ```python
+    class OutOfIngredientsError(Exception):
+    pass
+
+    def make_chai(milk, sugar):
+      if milk == 0 or sugar == 0:
+          raise OutOfIngredientsError("Missing milk or sugar")
+      print("chai is ready...")
+
+
+    make_chai(0, 1)
+  ```
+
+- **with** operator:
+  - with operator is a syntax for: `__enter()__` `__exit()__` and handle an exception
+  ```python
+    with open("order.txt", "w") as file:
+      file.write("ginger tea - 4 cups")
+  ```
