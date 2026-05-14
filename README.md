@@ -238,3 +238,85 @@ def brew_chai(type, milk="no"):
 
 brew_chai("Masala")
 ```
+
+## Section 9 - OOP
+
+- In python, when you instanciate an object from a class, you can see it in the object type
+  - `print(type(ginger_tea) is Chai)`
+
+- _Shadowing / attribute lookup:_ Specific behavior:
+  - We were seeing `del` for deleting attributes from an object
+    - If we delete an attribute, but a class attribute with the same name exists, Python falls back to it (otherwise, it will break the code)
+
+- Methods:
+  - **Instance methods** use `self` as the first parameter.
+    - `self` refers to the current object/instance.
+    - Python passes `self` automatically when calling `object.method()`.
+  - **Class methods** (refers to the class itself) use `cls` as the first parameter and need `@classmethod`.
+    - So if I change an attribute by this method, for example, it changes for the whole class, not only the opbject
+  - **Static methods** use neither `self` nor `cls` and need `@staticmethod`
+
+- `__init__(self, *args, **kwargs)`
+  - `__init__` is used for initiating the object from a class - Its created automatically with `self` as arg
+  - If need need more args for instanciation, I need to create a custom init method
+
+- 4 Pilars of OOP
+  - Abstraction
+    - "Hide implementation and only show whats is necessary" - Basically creating the class
+  - Encapsulation
+    - Make some properties private
+      - Like the `self.__arms_qty = 2` in our example
+      - **Important:** So we need to create getters and setters to handle the private data
+      - **Getters and Setters:**
+        - Practical use: avoid changing important data directly and centralize the rules for reading/updating it
+
+      ```python
+      class BankAccount:
+          def __init__(self, balance):
+              self.__balance = balance
+
+          @property
+          def balance(self):
+              return self.__balance
+
+          @balance.setter
+          def balance(self, value):
+              if value < 0:
+                  raise ValueError("Balance cannot be negative")
+              self.__balance = value
+
+      account = BankAccount(100)
+      print(account.balance)  # getter
+
+      account.balance = 150  # setter
+      ```
+
+  - Inheritance
+    - Inheriting props from a higher hierarchycal class
+      - `class Dog(Animal)`
+
+    - `super()`
+      - super() is about the parent class
+      - e.g.: `super().__init__(eat, sleep)`
+
+  - Polimorphism
+    - Which is basically have different forms
+      - So if we are creating a parent class Animal, each child class has `talk(self)` method, like bark, roar, etc, this is the concept of polymorphism
+
+- Compositions
+  - Creating classes using otther classes, being a **HAS-A** relationship
+    - E.g.:
+
+      ```python
+      class Engine():
+      def start(self):
+      print("Engine started")
+
+      class Motorcycle():
+      def **init**(self):
+      self.engine = Engine()
+
+          def start(self):
+              self.engine.start()
+              print("Motorcycle started")
+      ```
