@@ -361,3 +361,80 @@ brew_chai("Masala")
     with open("order.txt", "w") as file:
       file.write("ginger tea - 4 cups")
   ```
+
+## Section 11 - MultiThreading, Multiprocessing, GIL
+
+- Concurrency
+  - Basically, its the concept of dividing to task to be executed in chuncks at once
+    - threading.Thread
+      - [Threading example](./assets/python-udemy-main/12_threads_concurrency/01_threading.py)
+        - In this example:
+          i. the thread ensures the 2nd loading snippet runs whie the 1st is "loading" / sleeping;
+          ii. `order_thread.start()` starts the thread
+          iii. `order_thread.join()` stops the code running until this thread is finished
+    - asyncio
+
+- Parallelism
+  - multiprocessing
+    - [multiprocessing example](./assets/python-udemy-main/12_threads_concurrency/02_multiprocessing.py)
+    - `concurrent.futures.ProcessPoolExecutor`
+
+- GIL - Global Interpreter Lock
+  - Threads in the same Python process share the same GIL.
+  - Because of that, only one thread can execute Python bytecode at a time inside that process.
+  - A new `Process` creates a separate Python interpreter.
+  - Each process has its own GIL.
+  - So multiprocessing can run CPU-heavy Python code truly in parallel across CPU cores.
+
+- Lock
+  - The lock is used to avoid race condition
+  - In this case, 2 different loops could affect the global counter value at once - so lock avoids it
+
+  ```python
+    import threading
+
+    counter = 0
+    lock = threading.Lock()
+
+    def increament():
+        global counter
+        for _ in range(100000):
+            with lock:
+                counter += 1
+
+    threads = [threading.Thread(target=increament) for _ in range(10)]
+    [t.start() for t in threads]
+    [t.join() for t in threads]
+
+    print(f"Final counter: {counter}")
+  ```
+
+- **Obs.:** Files 09 and 10 compares thread \* process (process was 2x faster)
+
+- Sharing data between processes
+  - Unlike threads, processes do not naturally share normal Python variables
+  - For that, `multiprocessing` gives us special shared tools like `Queue` and `Value`
+
+- `Queue`
+  - Use `Queue` when one process needs to send data/messages to another process
+  - Think of it as a safe pipe between processes
+  - In [11_process_queue.py](./assets/python-udemy-main/12_threads_concurrency/11_process_queue.py):
+    - the child process does `queue.put("Masala chai is ready")`
+    - the main process reads it later with `queue.get()`
+  - Best for:
+    - passing results
+    - sending tasks
+    - communication between processes
+
+- `Value`
+  - Use `Value` when processes need to share one simple variable in memory
+  - In [12_process_value.py](./assets/python-udemy-main/12_threads_concurrency/12_process_value.py):
+    - `Value('i', 0)` creates one shared integer starting at `0`
+    - each process increments the same `counter.value`
+    - `with counter.get_lock():` prevents race conditions while updating it
+  - Best for:
+    - one shared number, flag, or small piece of state
+
+- Rule of thumb
+  - `Queue` = send data between processes
+  - `Value` = share one small mutable value between processes
