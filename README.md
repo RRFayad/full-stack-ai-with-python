@@ -438,3 +438,22 @@ brew_chai("Masala")
 - Rule of thumb
   - `Queue` = send data between processes
   - `Value` = share one small mutable value between processes
+
+## Section 12 - Asyncio
+
+- Like JS, `async` and `await`
+
+- Problems to be solved:
+  - Async makes it equally faster as using threds / processes
+  - Main concepts:
+    - `asyncio.gather`
+
+- Asyncio is not a total substitution for multiprocessing or multithreading; they can be combined.
+  - Example: [04_thread_async.py](./assets/python-udemy-main/13_async_python/04_thread_async.py)
+  - In this example, `asyncio` keeps the async event loop free while `run_in_executor()` sends the blocking function to a separate thread.
+  - This is useful when we have blocking code, like `time.sleep()` or a sync library, but still want to use it inside an async program.
+
+- Daemon thread:
+  - A background thread that does not block the program from exiting
+  - If only daemon threads are left, Python exits
+  - Useful for non-critical background tasks (avoid it for important work because it may stop before finishing)
