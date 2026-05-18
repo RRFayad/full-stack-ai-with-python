@@ -2,10 +2,11 @@ from typing import Optional
 from pydantic import BaseModel, Field
 import re
 
+
 class Employee(BaseModel):
     id: int
     name: str = Field(
-        ...,
+        ...,  # required
         min_length=3,
         max_length=50,
         description="Employee Name",
@@ -19,7 +20,7 @@ class Employee(BaseModel):
 
 
 class User(BaseModel):
-    email: str = Field(...,regex=r'')
+    email: str = Field(..., regex=r'')
     phone: str = Field(..., regex=r'')
     age: int = Field(
         ...,

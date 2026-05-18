@@ -5,11 +5,11 @@ class Product(BaseModel):
     price: float
     quantity: int
 
-    @computed_field
-    @property
+    @computed_field  # Include this derived value in Pydantic serialization
+    @property  # Access this method like an attribute, not like a function call
     def total_price(self) -> float:
         return self.price * self.quantity
-    
+
 
 class Booking(BaseModel):
     user_id: int
@@ -21,7 +21,8 @@ class Booking(BaseModel):
     @property
     def total_amount(self) -> float:
         return self.nights * self.rate_per_night
-    
+
+
 booking = Booking(
     user_id=123,
     room_id=456,

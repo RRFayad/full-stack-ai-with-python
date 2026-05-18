@@ -8,6 +8,7 @@ class Address(BaseModel):
     city: str
     zip_code: str
 
+
 class User(BaseModel):
     id: int
     name: str

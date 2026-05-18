@@ -9,7 +9,7 @@ class User(BaseModel):
         if len(v) < 4:
             raise ValueError("Username must be at least 4 characters")
         return v
-    
+
 
 class SignupData(BaseModel):
     password: str

@@ -3,8 +3,9 @@
 ### Intro Notes
 
 - Virtual Env
-  - `python3 venv .venv`
-  - `.venv/bin/activate`
+  - `python3 -m venv .venv`
+  - `source .venv/bin/activate`
+  - `pip install --upgrade pip`
   - Usually we want to have a .txt requirements file
 
 - PEP 8
@@ -457,3 +458,129 @@ brew_chai("Masala")
   - A background thread that does not block the program from exiting
   - If only daemon threads are left, Python exits
   - Useful for non-critical background tasks (avoid it for important work because it may stop before finishing)
+
+## Section 13 - Pydantic Validation
+
+- Pydantics is for: Data Validation, and setting management
+  - Data Validation includes data modeling, data parsing, serialization, error handling etc
+
+- So the logic is:
+  - import `BaseModel` to create Pydantic Data Model (like Zod);
+  - Define type annotations
+    - We might import from `typing`
+    - Also there are other specifities, such as `Union`
+  - Field data validation on each variable;
+    - Pydantic raises errors if the types are invalid
+    - It will also try to convert for the expected type, like converting `"100"` to an `int`if thats the case, or `"true"` to `True`
+  - Model Initiation (unpack the dictionaries with `**`)
+  - Convert the Pydantic object into the proper data type, after validation
+
+- Validation can be:
+  - Pre Built:
+
+    ```python
+        class BookRequest(BaseModel):
+          id: Optional[int] = None
+          title: str = Field(min_length=3)
+          author: str = Field(min_length=1)
+          description: str = Field(min_length=1, max_length=100)
+          rating: int = Field(ge=1, le=5)
+    ```
+
+  - Custom Field Validators:
+
+    ```python
+      class Person(BaseModel):
+    first_name: str
+    last_name : str
+
+    @field_validator('first_name', 'last_name')
+    def names_must_be_capitalize(cls, v):   #class, value
+        if not v.istitle():
+            raise ValueError('Names must be capitilized')
+        return v
+    ```
+
+- Custom Model Validation
+
+  ```python
+    class SignupData(BaseModel):
+    password: str
+    confirm_password: str
+
+    @model_validator(mode='after')
+    def password_match(cls, values):
+        if values.password != values.confirm_password:
+            raise ValueError("Password do not match")
+        return values
+  ```
+
+- Computed Property
+  - Basically it is used to add a property from a function
+
+  ```python
+    class Product(BaseModel):
+      price: float
+      quantity: int
+
+      @computed_field  # Include this derived value in Pydantic serialization
+      @property  # Access this method like an attribute, not like a function call
+      def total_price(self) -> float:
+          return self.price * self.quantity
+  ```
+
+- Nested Models
+
+```python
+ class Address(BaseModel):
+     street: str
+     city: str
+     postal_code: str
+
+
+ class User(BaseModel):
+     id: int
+     name: str
+     address: Address
+
+  user_data = {
+    "id": 1,
+    "name": "Hitesh",
+    "address": {
+        "street": "321 something",
+        "city": "Paris",
+        "postal_code": "20002"
+    }
+}
+
+  user = User(**user_data)
+```
+
+- Recursive Models:
+  - Some models might refer to themselves
+  - We must use the `model_rebuild()` for it
+
+```python
+  class Comment(BaseModel):
+    id: int
+    content: str
+    replies: Optional[List['Comment']] = None
+
+Comment.model_rebuild()
+
+
+comment = Comment(
+    id= 1,
+    content="First comment",
+    replies=[
+        Comment(id=2, content="reply 1"),
+        Comment(id=3, content="reply 2", replies=[
+            Comment(id=4, content="nested reply")
+        ])
+    ]
+)
+```
+
+- Pydantic Serialization
+  - Basically it means converting a Pydantic model instance into plain data formats that are easy to send, save, or display.
+  - So we have the Class type when we instanciate from the Model, we can use `instanciated_obj.model_dump()` to convert it to dictionary, and `instanciated_obj.model_dump_json()` to onvert it to _json-encoded_ string
