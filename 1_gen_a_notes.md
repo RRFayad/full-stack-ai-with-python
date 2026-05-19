@@ -22,3 +22,9 @@
   - How context might affect the meaning of the word - e.g. River Bank vs Finnancial Bank
 
 - At the end, in Linear, its basically defining the probabilities of each possible token to be the next token, to then define the most probable
+
+## Section 15: API Setup
+
+- OpenAI is 100% paid for API usage
+- Gemini has a free tier
+- Since this course will use Open AI, Gemini has the Gemini OpenAI api - its possible to use the OpenAI api via Gemini API (Gemini surely made it to let projects to migrate from OpenAI to Gemini)
