@@ -41,22 +41,22 @@ SYSTEM_PROMPT = """
 print("\n\n\n")
 
 message_history = [
-    { "role": "system", "content": SYSTEM_PROMPT },
+    {"role": "system", "content": SYSTEM_PROMPT},
 ]
 
 user_query = input("👉🏻 ")
-message_history.append({ "role": "user", "content": user_query })
+message_history.append({"role": "user", "content": user_query})
 
 while True:
     response = client.chat.completions.create(
         model="gpt-4o",
         response_format={"type": "json_object"},
-        messages=message_history
+        messages=message_history,
     )
 
     raw_result = response.choices[0].message.content
     message_history.append({"role": "assistant", "content": raw_result})
-    
+
     parsed_result = json.loads(raw_result)
 
     if parsed_result.get("step") == "START":
