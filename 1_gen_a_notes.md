@@ -73,3 +73,14 @@
 
 - So instead of downloading and installing it locally, we can run these things on a Docker container in our machine
   - Basically the module was about running it locally, and having a basic fastApi also running locally to send messages to LLM, parse back responses
+
+## Section 19: Hugging Face
+
+- Hugging Face is like a hub/registry for AI models, datasets and demos
+  - Mental model: GitHub + npm/pip registry for AI
+
+- Practical use: search for models that fit the task, check license/commercial usage and hardware requirements, then use via API or download/run locally if possible
+
+- Obs.: being available on Hugging Face does not mean it is easy to run locally; some models require strong GPU, lots of RAM or accepting usage terms
+
+- For now: understand how to find and consume existing models; no need to deeply learn model training/deployment yet
