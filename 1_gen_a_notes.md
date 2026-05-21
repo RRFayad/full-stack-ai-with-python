@@ -65,3 +65,11 @@
   -as we are doing, with an object defining role and content
 
 - INST Prompting
+
+## Section 18: Local LLM Deployment & API Integration
+
+- Run LLMs offline
+  - DeepSeek, Qwen, Llama, Gemma, ar emodels you can download and run offline
+
+- So instead of downloading and installing it locally, we can run these things on a Docker container in our machine
+  - Basically the module was about running it locally, and having a basic fastApi also running locally to send messages to LLM, parse back responses
