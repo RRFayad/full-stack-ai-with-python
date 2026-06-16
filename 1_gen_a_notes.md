@@ -84,3 +84,31 @@
 - Obs.: being available on Hugging Face does not mean it is easy to run locally; some models require strong GPU, lots of RAM or accepting usage terms
 
 - For now: understand how to find and consume existing models; no need to deeply learn model training/deployment yet
+
+## Section 20: Agentic AI
+
+- When we "convert" a LLM into a agent we expand its capabilities to perform actions, such as accessing DBs
+  - Basically we give if tools (functions, apis etc) so it can run then while thinking
+  - Thats why its important to add the chain of thought
+
+- Weather Agent: [agent.py](./src/20_AI_Agent/main.py)
+  - We want to create an agent that check the current weather via api (which depends on the city as an arg)
+  - User inputs the city;
+  - Basically we create the function to fetch the data from the api;
+  - We create a chain of thought to the agent, where we list all tools it has access, and it decides what tool he will use depending on the context of the input
+
+- **Structured Output**
+  - When I want a structured Output, I should:
+  1. Create the pydantic class;
+  2. Define the text_format in the req;
+  3. Extract it as `parsed_result = response.output_parsed`
+
+  ```python
+            response = client.responses.parse(
+            model="gpt-5.5",
+            instructions=SYSTEM_PROMPT,
+            input=message_history,
+            text_format=Output,
+        )
+
+  ```
