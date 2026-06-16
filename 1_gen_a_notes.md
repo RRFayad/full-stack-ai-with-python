@@ -112,3 +112,11 @@
         )
 
   ```
+
+- Create a CLI coding agent:
+  - Basically we create a tool function to the agent to runa. command on sistem:
+  ```python
+      def run_command (cmd:str):
+        result = os.system(cmd)
+        return result
+  ```
