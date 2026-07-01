@@ -290,3 +290,19 @@ The app searches the PDF first, retrieves only the relevant parts, and gives tho
 ```
 
 That is the core idea of RAG.
+
+## Section 22 - Scalable RAS with Async Queues & Distributed Workers
+
+- We must make it asyncronous, so the system is not blocked while the RAG si being used
+
+### Queues in System Design
+
+- We are going to push the request into a queue (FIFO)
+
+### Implementing the Queues
+
+- For the Queues, we need to use RQ system, which needs Redis (or Valkey - its the same code, but Redis is not open sourced anymore)
+
+- `pip install rq`
+
+- Basically, we will create the query processing as a util function (`process_query`) and use redis to enqueue it ion our server
