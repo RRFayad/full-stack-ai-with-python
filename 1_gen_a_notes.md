@@ -294,6 +294,9 @@ That is the core idea of RAG.
 ## Section 22 - Scalable RAS with Async Queues & Distributed Workers
 
 - We must make it asyncronous, so the system is not blocked while the RAG si being used
+  - So we need to create:
+    - queue orchestrating logic
+    - FastAPI server - so we will have a query and a result routes
 
 ### Queues in System Design
 
