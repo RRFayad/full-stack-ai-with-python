@@ -291,16 +291,37 @@ The app searches the PDF first, retrieves only the relevant parts, and gives tho
 
 That is the core idea of RAG.
 
-## Section 22 - Scalable RAS with Async Queues & Distributed Workers
+## Section 22 - Scalable RAG with Async Queues & Distributed Workers
 
-- We must make it asyncronous, so the system is not blocked while the RAG si being used
+- We must make it asyncronous, so the system is not blocked while the RAG is being used
   - So we need to create:
     - queue orchestrating logic
     - FastAPI server - so we will have a query and a result routes
 
+- Instead of the API doing the RAG search + LLM call synchronously (blocking the request), it just pushes the job into a queue and immediately returns a `job_id`. A separate worker process picks up jobs from the queue and processes them whenever it can.
+
+---
+
+### Mental Model
+
+```text
+client
+→ POST /chat (query)
+→ enqueue job in Redis/Valkey
+→ return job_id immediately
+→ worker picks job from queue
+→ worker runs the RAG pipeline (from Section 21)
+→ result stored on the job
+→ client polls GET /job-status (job_id)
+→ result
+```
+
+---
+
 ### Queues in System Design
 
 - We are going to push the request into a queue (FIFO)
+- This decouples "receiving the request" from "processing the request" - the API stays fast/responsive, and heavy work (embeddings + LLM call) happens in the background
 
 ### Implementing the Queues
 
@@ -308,4 +329,61 @@ That is the core idea of RAG.
 
 - `pip install rq`
 
-- Basically, we will create the query processing as a util function (`process_query`) and use redis to enqueue it ion our server
+- Basically, we will create the query processing as a util function (`process_query`) and use redis to enqueue it in our server
+
+### Main Components
+
+- `client/rq_client.py`
+  - Creates the `queue` object, connected to Redis/Valkey running locally
+  ```python
+  queue = Queue(connection=Redis(host="localhost", port=6379))
+  ```
+
+- `queues/worker.py`
+  - Holds `process_query`, the actual RAG logic (same idea as Section 21's `chat.py`): similarity search on Qdrant, build context, call the LLM, return the answer
+  - This is the function that gets executed by the worker process, not by the API process
+
+- `server.py`
+  - `POST /chat`: enqueues `process_query` with the user's query and immediately returns `{"status": "queued", "job_id": ...}`
+    ```python
+    job = queue.enqueue(process_query, query)
+    ```
+  - `GET /job-status`: given a `job_id`, fetches the job from the queue and returns its result (`None` while still processing)
+    ```python
+    job = queue.fetch_job(job_id=job_id)
+    result = job.return_value()
+    ```
+
+- `main.py`
+  - Entry point, just runs the FastAPI app with `uvicorn`
+
+### Running the Worker
+
+- The API only enqueues jobs - something else has to consume them. That's the RQ worker, run as a separate process:
+  ```bash
+  rq worker
+  ```
+- **Obs.:** Had to run `OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES` in terminal to run on mac (RQ forks a process per job, and macOS's Objective-C runtime crashes on fork when certain frameworks were already initialized)
+
+### Obs.: Imports
+
+- Files inside `22_rag_quere` use plain sibling imports (`from server import app`, `from queues.worker import process_query`), not relative imports (`from .server import app`)
+  - `main.py`/`server.py` are run directly as scripts (not via `python -m`), and the folder name (`22_rag_quere`) starts with a digit, so it can't be treated as a real Python package anyway
+
+### Docker / Valkey
+
+`docker-compose.yml`:
+
+```yaml
+services:
+  valkey:
+    image: valkey/valkey
+    ports:
+      - "6379:6379"
+```
+
+Run:
+
+```bash
+docker compose up -d
+```
