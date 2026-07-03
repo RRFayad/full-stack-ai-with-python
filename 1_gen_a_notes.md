@@ -34,7 +34,7 @@
 - When we are createing the prompt, there is:
   - System or developer role (also instructions for newer. versions)
 
-- Intructions patterns:
+- Instructions patterns:
   - Define 'shots'
     - Zero Shot Prompting
       - DIrectly giving the instruction for the model - like "if its not math related, just reply 'sorry'"
@@ -335,6 +335,7 @@ client
 
 - `client/rq_client.py`
   - Creates the `queue` object, connected to Redis/Valkey running locally
+
   ```python
   queue = Queue(connection=Redis(host="localhost", port=6379))
   ```
@@ -387,3 +388,10 @@ Run:
 ```bash
 docker compose up -d
 ```
+
+## Section 23 - Multi Modal Agents
+
+- LLM that process different data types (text, image, audio etc)
+
+- In GPT api it is basically adding more content items in the array
+  - For each model we can simply check what types are supported in the input and output formats
