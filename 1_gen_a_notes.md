@@ -395,3 +395,64 @@ docker compose up -d
 
 - In GPT api it is basically adding more content items in the array
   - For each model we can simply check what types are supported in the input and output formats
+
+## Section 24 - Agentic Workflows and LangGraph
+
+- Many times we need to create a workflow, like:
+  - user_query > planning > Decide the flow branch:
+    - Do Web Search
+    - Simple LLM Call
+  - Get a 2nd LLM to review the response
+    - Review and update
+    - End flow
+
+- So LangGraph exists for these agentic workflows
+  - In LangGraph you have the Nodes (functions)
+  - We connect the Nodes with Edges
+  - Than we have a state (a piece of data), which will pass by each node
+
+- LangGraph is used to build stateful AI workflows.
+- Nodes are functions/steps.
+- Edges define what runs after what (chains the nodes).
+- State is the shared data passed through the graph.
+- Each node receives the current state and returns updates to the state.
+- Useful when workflows have branching, loops, tool calls, reviews, retries, or multiple steps.
+- For simple linear code, normal function chaining may be enough.
+
+### Setup:
+
+- `pip install -U langgraph`
+
+- Create the graph_builder:
+
+  ```python
+    class State(TypedDict):
+      messages: Annotated[list, add_messages]
+
+    graph_builder = StateGraph(State)
+  ```
+
+  - Create the nodes, chain them with the Edges and then compile (also setting the initial state):
+
+    ```python
+        def sample_node(state: State):
+          pass
+
+        def random_node(state: State):
+          pass
+
+
+        graph_builder = StateGraph(State)
+
+        graph_builder.add_node("chatbot", chatbot)
+        graph_builder.add_node("sample_node", sample_node)
+
+        graph_builder.add_edge(START, "chatbot")
+        graph_builder.add_edge("chatbot", "sample_node")
+        graph_builder.add_edge("sample_node", END)
+
+        graph = graph_builder.compile()
+
+        initial_state = State({"messages": ["What is my name?"]})
+        final_state = graph.invoke(initial_state)
+    ```

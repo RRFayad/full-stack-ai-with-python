@@ -7,21 +7,22 @@ from langchain.chat_models import init_chat_model
 
 load_dotenv()
 
-llm = init_chat_model(
-    model="gpt-4.1-mini",
-    model_provider="openai"
-)
+llm = init_chat_model(model="gpt-4.1-mini", model_provider="openai")
+
 
 class State(TypedDict):
     messages: Annotated[list, add_messages]
 
+
 def chatbot(state: State):
     response = llm.invoke(state.get("messages"))
-    return { "messages": [response] }
+    return {"messages": [response]}
+
 
 def samplenode(state: State):
     print("\n\nInside samplenode node", state)
-    return { "messages": ["Sample Message Appended"] }
+    return {"messages": ["Sample Message Appended"]}
+
 
 graph_builder = StateGraph(State)
 
@@ -34,8 +35,10 @@ graph_builder.add_edge("samplenode", END)
 
 graph = graph_builder.compile()
 
-updated_state = graph.invoke(State({"messages": ["What is my name?"]}))
-print("\n\nupdated_state", updated_state)
+initial_state = State({"messages": ["What is my name?"]})
+final_state = graph.invoke(initial_state)
+
+print("\n\nupdated_state", final_state)
 
 # (START) -> chatbot -> samplenode -> (END)
 
