@@ -423,36 +423,15 @@ docker compose up -d
 
 - `pip install -U langgraph`
 
-- Create the graph_builder:
+- Steps:
+  - Create the State type class
+  - Create the graph_builder
+  - Create the nodes functions
+  - Add the nodes to the graph_builder
+  - Chain them with the Edges
+  - For Conditional Edges I might add a function that return the correct node name
+  - Compile (also setting the initial state)
 
-  ```python
-    class State(TypedDict):
-      messages: Annotated[list, add_messages]
-
-    graph_builder = StateGraph(State)
-  ```
-
-  - Create the nodes, chain them with the Edges and then compile (also setting the initial state):
-
-    ```python
-        def sample_node(state: State):
-          pass
-
-        def random_node(state: State):
-          pass
-
-
-        graph_builder = StateGraph(State)
-
-        graph_builder.add_node("chatbot", chatbot)
-        graph_builder.add_node("sample_node", sample_node)
-
-        graph_builder.add_edge(START, "chatbot")
-        graph_builder.add_edge("chatbot", "sample_node")
-        graph_builder.add_edge("sample_node", END)
-
-        graph = graph_builder.compile()
-
-        initial_state = State({"messages": ["What is my name?"]})
-        final_state = graph.invoke(initial_state)
-    ```
+- **Obs.:**
+  - Check the structure in my langgraph_exercise (I did, its not in the course);
+  - When returning a node, only add the state prop that will be changed
