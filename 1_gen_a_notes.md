@@ -435,3 +435,11 @@ docker compose up -d
 - **Obs.:**
   - Check the structure in my langgraph_exercise (I did, its not in the course);
   - When returning a node, only add the state prop that will be changed
+
+## Section 25: Checkpoints in LangGraph
+
+- Basically, the problem to be solved is that the State is lost between sessions (so there is no context from previous conversations).
+  - Checkpoints are persisted and can be used to restore the state of a thread at a later time
+
+- A checkpointer saves the graph state after each step, so the graph can remember previous interactions.
+  - With a checkpointer, LangGraph stores the state in MongoDB under a specific conversation/thread ID.
